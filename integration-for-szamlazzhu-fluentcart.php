@@ -18,11 +18,6 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 
-// Load plugin textdomain
-\add_action('plugins_loaded', function() {
-    \load_plugin_textdomain('integration-for-szamlazzhu-fluentcart', false, dirname(\plugin_basename(__FILE__)) . '/languages/');
-});
-
 require __DIR__ . DIRECTORY_SEPARATOR .'autoload.php';
 
 use \SzamlaAgent\SzamlaAgentAPI;
