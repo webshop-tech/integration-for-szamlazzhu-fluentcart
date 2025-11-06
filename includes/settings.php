@@ -150,7 +150,7 @@ const INVOICE_TYPE_E_INVOICE = 2;
             ];
             echo '<select name="szamlazz_hu_invoice_language">';
             foreach ($languages as $code => $name) {
-                echo '<option value="' . \esc_attr($code) . '" ' . ($code == $value) ? 'selected>' : '>' . \esc_html($name) . '</option>';
+                echo '<option value="' . \esc_attr($code) . '" ' . ($code == $value ? 'selected>' : '>') . \esc_html($name) . '</option>';
             }
             echo '</select>';
         },
@@ -169,7 +169,7 @@ const INVOICE_TYPE_E_INVOICE = 2;
             ];
             echo '<select name="szamlazz_hu_invoice_type">';
             foreach ($types as $type_value => $type_name) {
-                echo '<option value="' . \esc_attr($type_value) . '" ' . ($type_value == $value) ? 'selected>' : '>' . \esc_html($type_name) . '</option>';
+                echo '<option value="' . \esc_attr($type_value) . '" ' . ($type_value == $value ? 'selected>' : '>') . \esc_html($type_name) . '</option>';
             }
             echo '</select>';
         },
@@ -207,7 +207,7 @@ const INVOICE_TYPE_E_INVOICE = 2;
             $options = [0, 5, 18, 27];
             echo '<select name="szamlazz_hu_shipping_vat">';
             foreach ($options as $option) {
-                echo '<option value="' . \esc_attr($option) . '" ' . ($option == $value) ? 'selected>' : '>' . \esc_html($option) . '%</option>';
+                echo '<option value="' . \esc_attr($option) . '" ' . ($option == $value ? 'selected>' : '>') . \esc_html($option) . '%</option>';
             }
             echo '</select>';
         },
