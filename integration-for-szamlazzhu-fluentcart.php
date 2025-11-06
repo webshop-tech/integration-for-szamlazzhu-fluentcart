@@ -1,14 +1,14 @@
 <?php
 /**
- * Plugin Name: Számlázz.hu for FluentCart
- * Plugin URI: https://webshop.tech/szamlazz-hu-fluentcart
+ * Plugin Name: Integration for Számlázz.hu and FluentCart
+ * Plugin URI: https://webshop.tech/integration-for-szamlazzhu-fluentcart/
  * Description: Generates invoices on Számlázz.hu for FluentCart orders
- * Version: 0.0.1
+ * Version: 1.0.0
  * Author: Gábor Angyal
  * Author URI: https://webshop.tech
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: szamlazz-hu-fluentcart
+ * Text Domain: integration-for-szamlazzhu-fluentcart
  */
 
 namespace SzamlazzHuFluentCart;
