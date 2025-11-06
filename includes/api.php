@@ -116,11 +116,12 @@ function build_invoice_xml($params) {
 /**
  * Generate invoice via Számlázz.hu API
  * 
+ * @param int $order_id The order ID for logging
  * @param string $api_key Számlázz.hu API key
  * @param array $params Invoice parameters
  * @return array|\WP_Error Array with invoice data on success, or WP_Error on failure
  */
-function generate_invoice_api($api_key, $params) {
+function generate_invoice_api($order_id, $api_key, $params) {
     // Add API key to params
     $params['api_key'] = $api_key;
     
@@ -151,7 +152,7 @@ function generate_invoice_api($api_key, $params) {
     
     // Check response code
     if ($response_code !== 200) {
-        return new \WP_Error('api_error', 'API returned error code: ' . $response_code);
+        return create_error($order_id, 'api_error', 'API returned error code', $response_code);
     }
     
     // Parse response based on content type
@@ -159,7 +160,7 @@ function generate_invoice_api($api_key, $params) {
     
     if (strpos($content_type, 'application/pdf') !== false) {
         // Response is PDF (text mode response)
-        return new \WP_Error('api_error', 'Unexpected PDF response. XML response expected.');
+        return create_error($order_id, 'api_error', 'Unexpected PDF response. XML response expected.');
     } elseif (strpos($content_type, 'text/xml') !== false || strpos($content_type, 'application/xml') !== false) {
         // Response is XML
         try {
@@ -171,7 +172,7 @@ function generate_invoice_api($api_key, $params) {
             $error_message = (string)$xml->hibauzenet;
             
             if ($success === 'false' || !empty($error_code)) {
-                return new \WP_Error('api_error', sprintf('Invoice generation failed [%s]: %s', $error_code, $error_message));
+                return create_error($order_id, 'api_error', sprintf('Invoice generation failed [%s]', $error_code), $error_message);
             }
             
             // Extract invoice data
@@ -192,11 +193,11 @@ function generate_invoice_api($api_key, $params) {
             return $result;
             
         } catch (\Exception $e) {
-            return new \WP_Error('parse_error', 'Failed to parse XML response: ' . $e->getMessage());
+            return create_error($order_id, 'parse_error', 'Failed to parse XML response', $e->getMessage());
         }
     } else {
         // Unknown response type, try to parse as text error
-        return new \WP_Error('api_error', 'Unknown response type: ' . $response_body);
+        return create_error($order_id, 'api_error', 'Unknown response type', substr($response_body, 0, 200));
     }
 }
 
@@ -221,11 +222,12 @@ function build_taxpayer_xml($api_key, $tax_number) {
 /**
  * Query taxpayer data from NAV via Számlázz.hu API
  * 
+ * @param int $order_id The order ID for logging
  * @param string $api_key Számlázz.hu API key
  * @param string $tax_number Tax number (törzsszám - first 8 digits)
  * @return array|\WP_Error Array with taxpayer data on success, or WP_Error on failure
  */
-function get_taxpayer_api($api_key, $tax_number) {
+function get_taxpayer_api($order_id, $api_key, $tax_number) {
     // Build XML request
     $xml_string = build_taxpayer_xml($api_key, $tax_number);
     
@@ -248,7 +250,7 @@ function get_taxpayer_api($api_key, $tax_number) {
     
     // Check response code
     if ($response_code !== 200) {
-        return new \WP_Error('api_error', 'API returned error code: ' . $response_code);
+        return create_error($order_id, 'api_error', 'Taxpayer API returned error code', $response_code);
     }
     
     // Parse XML response
@@ -262,7 +264,7 @@ function get_taxpayer_api($api_key, $tax_number) {
         // Check if taxpayer is valid
         $taxpayerValidity = $xml->xpath('//ns2:taxpayerValidity');
         if (empty($taxpayerValidity) || "true" !== (string)$taxpayerValidity[0]) {
-            return new \WP_Error('invalid_taxpayer', 'Taxpayer is not valid');
+            return create_error($order_id, 'invalid_taxpayer', 'Taxpayer is not valid');
         }
         
         $data = array(
@@ -331,7 +333,7 @@ function get_taxpayer_api($api_key, $tax_number) {
         return $data;
         
     } catch (\Exception $e) {
-        return new \WP_Error('parse_error', 'Failed to parse taxpayer XML: ' . $e->getMessage());
+        return create_error($order_id, 'parse_error', 'Failed to parse taxpayer XML', $e->getMessage());
     }
 }
 

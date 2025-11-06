@@ -40,7 +40,7 @@ function get_taxpayer_data($order_id, $api_key, $vat_number) {
     try {
         write_log($order_id, 'Fetching taxpayer data from NAV', 'VAT number', $vat_number);
         
-        $taxpayer_data = get_taxpayer_api($api_key, $vat_number);
+        $taxpayer_data = get_taxpayer_api($order_id, $api_key, $vat_number);
         
         if (\is_wp_error($taxpayer_data)) {
             write_log($order_id, 'Failed to fetch taxpayer data', 'Error', $taxpayer_data->get_error_message());
@@ -368,7 +368,7 @@ function generate_invoice($order) {
     write_log($order_id, 'Generating invoice via API');
     
     // Generate invoice using the new API
-    return generate_invoice_api($api_key, $params);
+    return generate_invoice_api($order_id, $api_key, $params);
 }
 
 /**
