@@ -12,7 +12,7 @@
     function invoiceAgentAutoloader( $class ) {
         $apiName = 'szamlaagent';
         $prefix  = $apiName . '\\';
-        $baseDir = __DIR__ . DIRECTORY_SEPARATOR . strtolower($apiName) . DIRECTORY_SEPARATOR;
+        $baseDir = __DIR__ . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . strtolower($apiName) . DIRECTORY_SEPARATOR;
         $path    = explode('\\', $class);
 
         if (strtolower($path[0]) == $apiName) {
