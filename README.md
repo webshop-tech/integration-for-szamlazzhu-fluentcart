@@ -1,4 +1,4 @@
-# Számlázz.hu for FluentCart
+# Integration for Számlázz.hu and FluentCart
 
 A WordPress plugin that automatically generates invoices on Számlázz.hu for FluentCart orders.
 
