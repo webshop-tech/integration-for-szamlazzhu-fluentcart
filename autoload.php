@@ -28,7 +28,7 @@
             if (file_exists($file)) {
                 require_once $file;
             } else {
-                throw new \ErrorException("Cannot load this class: {$class}, " . $file);
+                throw new \ErrorException("Cannot load this class: " . esc_html($class) . ", " . esc_html($file));
             }
         }
     }
