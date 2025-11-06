@@ -42,7 +42,6 @@ function build_invoice_xml($params) {
     $fejlec->addChild('helyesbitoszamla', $params['header']['corrective_invoice'] ?? 'false');
     $fejlec->addChild('helyesbitettSzamlaszam', $params['header']['corrective_invoice_number'] ?? '');
     $fejlec->addChild('dijbekero', $params['header']['proforma'] ?? 'false');
-    $fejlec->addChild('szamlaszamElotag', $params['header']['invoice_prefix'] ?? '');
     $fejlec->addChild('fizetve', $params['header']['paid'] ?? 'false');
     
     // Seller (optional, uses account defaults)
