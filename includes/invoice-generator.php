@@ -333,8 +333,8 @@ function generate_invoice($order) {
     }
     
     // Build invoice header data
-    $today = date('Y-m-d');
-    $due_date = date('Y-m-d', strtotime('+8 days'));
+    $today = gmdate('Y-m-d');
+    $due_date = gmdate('Y-m-d', strtotime('+8 days'));
     
     $header_data = array(
         'issue_date' => $today,
