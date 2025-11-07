@@ -314,7 +314,7 @@ function create_invoice($order, $main_order = null) {
         return;
     }
     
-    $result = generate_invoice($main_order);
+    $result = generate_invoice($main_order, $order_id);
     
     if (\is_wp_error($result)) {
         $error_message = 'Failed to generate invoice: ' . $result->get_error_message();
