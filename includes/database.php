@@ -41,12 +41,6 @@ function save_invoice($order_id, $invoice_number) {
     );
 }
 
-/**
- * Get invoice number by order ID
- * 
- * @param int $order_id The order ID
- * @return string|null The invoice number or null if not found
- */
 function get_invoice_number_by_order_id($order_id) {
     global $wpdb;
     $table_name = $wpdb->prefix . 'szamlazz_invoices';
