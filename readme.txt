@@ -57,6 +57,7 @@ Integration for Számlázz.hu and FluentCart is a WordPress plugin that seamless
 * **Document Types**: Only Invoices can be generated. Receipts and Pro forma invoices are not supported.
 * **IPN**: Instant Payment Notification is not yet supported.
 * **Lag**: Customers might need to wait a few seconds on the order conrifmation page before being able to download the invoice.
+* **Shipping VAT**: FluentCart shipping VAT may contain **minor rounding errors**. This is a known bug in FluentCart, which will be corrected in the following releases. The shipping VAT on the **invoice is calculated correctly** according to Hungarian legal regulations. This may cause a small difference (fraction of a Forint) between what the customer pays, and what appears on the invoice.
 
 = Language Support =
 
@@ -100,10 +101,14 @@ The interface language follows your WordPress language settings.
 
 == Additional Information ==
 
+= Troubleshooting for advanced users =
+
+Enable `WP_DEBUG` to see debug information on each orders activity log. 
+
 = Support =
 
 For general questions, please visit the [plugin website](https://webshop.tech/integration-for-szamlazzhu-fluentcart/).
-Bug reports can be submitted here on the project's [GitHub](https://github.com/agabor/integration-for-szamlazzhu-fluentcart) page.
+Bug reports and feature requests can be submitted on the project's [GitHub](https://github.com/agabor/integration-for-szamlazzhu-fluentcart) page.
 
 = Contributing =
 

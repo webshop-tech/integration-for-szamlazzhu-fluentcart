@@ -174,9 +174,9 @@ Please be aware of the following limitations:
 - **Pro forma invoices** (díjbekérő) are not supported
 
 ### Shipping VAT Calculation
-- Due to the way FluentCart calculates shipping VAT, **minor rounding errors may appear** on the web UI
-- The shipping VAT on the **invoice is calculated correctly** according to Számlázz.hu standards
-- This is a display-only issue and does not affect the accuracy of the generated invoice
+- FluentCart shipping VAT may contain **minor rounding errors**. This is a known bug in FluentCart, which will be corrected in the following releases.
+- The shipping VAT on the **invoice is calculated correctly** according to Hungarian legal regulations.
+- This may cause a small difference between what the customer pays, and what appears on the invoice.
 
 ### Instant Payment Notification
 - [Instant Payment Notification (IPN)](https://tudastar.szamlazz.hu/gyik/mi-az-ipn) is not yet supported.
