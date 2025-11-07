@@ -401,16 +401,34 @@ function fetch_invoice_pdf($order_id, $api_key, $invoice_number) {
         return create_error($order_id, 'api_error', 'API returned error code', $response_code);
     }
     
-    // Check if response is PDF or error message
-    if (isset($response_headers['content-type']) && strpos($response_headers['content-type'], 'application/pdf') !== false) {
-        // Success - got PDF
-        return array(
-            'success' => true,
-            'pdf_data' => $response_body,
-            'filename' => 'invoice_' . $invoice_number . '.pdf'
-        );
-    } else {
-        // Error response (usually XML)
-        return create_error($order_id, 'api_error', 'Failed to retrieve PDF', substr($response_body, 0, 200));
+    // Parse XML response (version 2 returns XML with embedded PDF)
+    try {
+        $xml = new \SimpleXMLElement($response_body);
+        
+        // Check for errors
+        $success = (string)$xml->sikeres;
+        $error_code = (string)$xml->hibakod;
+        $error_message = (string)$xml->hibauzenet;
+        
+        if ($success === 'false' || !empty($error_code)) {
+            return create_error($order_id, 'api_error', sprintf('PDF fetch failed [%s]', $error_code), $error_message);
+        }
+        
+        // Extract and decode PDF data
+        if (isset($xml->pdf) && !empty($xml->pdf)) {
+            return array(
+                'success' => true,
+                'pdf_data' => base64_decode((string)$xml->pdf),
+                'filename' => 'invoice_' . $invoice_number . '.pdf',
+                'invoice_number' => (string)$xml->szamlaszam,
+                'invoice_net' => (string)$xml->szamlanetto,
+                'invoice_gross' => (string)$xml->szamlabrutto,
+            );
+        } else {
+            return create_error($order_id, 'api_error', 'PDF data not found in response');
+        }
+        
+    } catch (\Exception $e) {
+        return create_error($order_id, 'parse_error', 'Failed to parse PDF response XML', $e->getMessage());
     }
 }
