@@ -26,7 +26,7 @@ const INVOICE_TYPE_E_INVOICE = 2;
 \add_action('admin_menu', function() {
     \add_options_page(
         \__('Számlázz.hu for FluentCart Settings', 'integration-for-szamlazzhu-fluentcart'),
-        \__('Számlázz.hu', 'integration-for-szamlazzhu-fluentcart'),
+        'Számlázz.hu',
         'manage_options',
         'integration-for-szamlazzhu-fluentcart',
         __NAMESPACE__ . '\\settings_page'
