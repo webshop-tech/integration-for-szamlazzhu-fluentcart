@@ -233,6 +233,30 @@ function handleVatValidation() {
         ], 200);
 }
 
+
+function renameEuVatHeader($fragments, $args)
+{
+    $cart = CartHelper::getCart();
+    $checkoutData = $cart->checkout_data ?? [];
+
+    if ($checkoutData['form_data']['billing_country'] !== 'HU')
+        return $fragments;
+
+    if (empty($fragments) || !is_array($fragments)) {
+        return $fragments;
+    }
+    
+    foreach ($fragments as $key => $fragment) {
+        if (isset($fragment['selector']) && $fragment['selector'] === '[data-fluent-cart-checkout-page-tax-wrapper]') {
+            if (isset($fragment['content'])) {
+                $fragments[$key]['content'] = str_replace('EU VAT', 'Hungarian VAT ID', $fragment['content']);
+            }
+        }
+    }
+    
+    return $fragments;
+}
+\add_filter('fluent_cart/checkout/after_patch_checkout_data_fragments',  __NAMESPACE__ . '\\renameEuVatHeader', 20, 2);
 \add_action('wp_ajax_fluent_cart_validate_vat', __NAMESPACE__ . '\\handleVatValidation', 1);
 \add_action('wp_ajax_nopriv_fluent_cart_validate_vat', __NAMESPACE__ . '\\handleVatValidation', 1);
 
