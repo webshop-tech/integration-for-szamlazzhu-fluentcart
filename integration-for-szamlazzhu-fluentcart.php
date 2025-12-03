@@ -3,7 +3,7 @@
  * Plugin Name: Integration for Számlázz.hu and FluentCart
  * Plugin URI: https://webshop.tech/integration-for-szamlazzhu-fluentcart/
  * Description: Generates invoices on Számlázz.hu for FluentCart orders
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Gábor Angyal
  * Author URI: https://webshop.tech
  * License: GPL v2 or later
@@ -25,6 +25,8 @@ require __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'invo
 require __DIR__ . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'settings.php';
 
 use FluentCart\App\Models\Order;
+use FluentCart\App\Helpers\CartHelper;
+use FluentCart\App\Services\Renderer\EUVatRenderer;
 
 function init_paths() {
     $suffix = get_option('szamlazz_hu_folder_suffix', '');
@@ -134,6 +136,38 @@ function get_pdf_path($invoice_number) {
     
     return null;
 }
+function handleVatValidation() {
+    nocache_headers();
+    if (!isset($_REQUEST['_wpnonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_REQUEST['_wpnonce'])), 'fluentcart')) {
+        wp_send_json(['message' => __('Security check failed', 'fluent-cart')], 403);
+    }
+    $vatNumber = isset($_REQUEST['vat_number']) ? sanitize_text_field(wp_unslash($_REQUEST['vat_number'])) : '';
+    $taxData = $this->validateEuVatNumber($countryCode, $vatNumber);
+    if (is_wp_error($taxData)) {
+        wp_send_json(['message' => $taxData->get_error_message()], 422);
+    }
+    if (!Arr::get($taxData, 'valid')) {
+        wp_send_json(['message' => __('VAT number is not valid!', 'fluent-cart')], 422);
+    }
+    $cart = CartHelper::getCart();
+    ob_start();
+    (new EUVatRenderer(true)))->render($cart);
+    $euVatView = ob_get_clean();
+    wp_send_json([
+        'success'   => true,
+        'message'   => __('VAT has been applied successfully', 'fluent-cart'),
+        'fragments' => [
+            [
+                'selector' => '[data-fluent-cart-checkout-page-tax-wrapper]',
+                'content'  => $euVatView,
+                'type'     => 'replace'
+            ]
+        ],
+    ], 200);
+}
+
+\add_action('wp_ajax_fluent_cart_validate_vat', __NAMESPACE__ . '\\handleVatValidation', 1);
+\add_action('wp_ajax_nopriv_fluent_cart_validate_vat', __NAMESPACE__ . '\\handleVatValidation', 1);
 
 \register_activation_hook(__FILE__, __NAMESPACE__ . '\\create_invoices_table');
 
