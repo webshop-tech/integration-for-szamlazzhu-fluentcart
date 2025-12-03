@@ -137,6 +137,13 @@ function get_pdf_path($invoice_number) {
     return null;
 }
 function handleVatValidation() {
+    $cart = CartHelper::getCart();
+
+    $checkoutData = $cart->checkout_data ?? [];
+
+    if ($checkoutData['tax_data']['tax_country'] !== 'HU')
+        return;
+
     \nocache_headers();
     if (!isset($_REQUEST['_wpnonce']) || !\wp_verify_nonce(\sanitize_text_field(\wp_unslash($_REQUEST['_wpnonce'])), 'fluentcart')) {
         \wp_send_json(['message' => __('Security check failed', 'fluent-cart')], 403);
@@ -166,22 +173,58 @@ function handleVatValidation() {
         \wp_send_json(['message' => __('VAT number is not valid!', 'fluent-cart')], 422);
     }
     
-    $cart = CartHelper::getCart();
+    
+    
+    $companyInfo = $taxData['name'] ?? '';
+    if (!empty($taxData['address'])) {
+        $addressParts = [];
+        if (!empty($taxData['postcode'])) {
+            $addressParts[] = $taxData['postcode'];
+        }
+        if (!empty($taxData['city'])) {
+            $addressParts[] = $taxData['city'];
+        }
+        if (!empty($taxData['address'])) {
+            $addressParts[] = $taxData['address'];
+        }
+        if (!empty($addressParts)) {
+            $companyInfo .= ' - ' . implode(', ', $addressParts);
+        }
+    }
+    
+    $checkoutData['tax_data']['valid'] = true;
+    $checkoutData['tax_data']['vat_number'] = $taxData['vat_id'];
+    $checkoutData['tax_data']['name'] = $companyInfo;
+    
+    $cart->checkout_data = $checkoutData;
+    $cart->save();
+    
+    ob_start();
+    (new CartSummaryRender($cart))->render(false);
+    $cartSummaryInner = ob_get_clean();
+
+    
     \ob_start();
     (new EUVatRenderer(true))->render($cart);
     $euVatView = \ob_get_clean();
     
-    \wp_send_json([
-        'success'   => true,
-        'message'   => __('VAT has been applied successfully', 'fluent-cart'),
-        'fragments' => [
-            [
-                'selector' => '[data-fluent-cart-checkout-page-tax-wrapper]',
-                'content'  => $euVatView,
-                'type'     => 'replace'
-            ]
-        ],
-    ], 200);
+        wp_send_json([
+            'success'   => true,
+            'message'   => __('VAT has been applied successfully', 'fluent-cart'),
+            'tax_data'  => $taxData,
+            'fragments' => [
+                [
+                    'selector' => '[data-fluent-cart-checkout-page-cart-items-wrapper]',
+                    'content'  => $cartSummaryInner,
+                    'type'     => 'replace'
+                ],
+                [
+                    'selector' => '[data-fluent-cart-checkout-page-tax-wrapper]',
+                    'content'  => $euVatView,
+                    'type'     => 'replace'
+                ]
+            ],
+        ], 200);
 }
 
 \add_action('wp_ajax_fluent_cart_validate_vat', __NAMESPACE__ . '\\handleVatValidation', 1);
