@@ -25,6 +25,7 @@ fi
 
 # Upload to server
 echo "Uploading to server..."
+ssh "$SSH_CONNECTION" "sudo rm /tmp/integration-for-szamlazzhu-fluentcart.zip"
 scp integration-for-szamlazzhu-fluentcart.zip "$SSH_CONNECTION:/tmp/"
 
 if [ $? -ne 0 ]; then
@@ -34,7 +35,7 @@ fi
 
 # Install via WP CLI
 echo "Installing plugin via WP CLI..."
-ssh "$SSH_CONNECTION" "cd $WP_PATH && sudo chown www-data /tmp/integration-for-szamlazzhu-fluentcart.zip && sudo -u www-data wp plugin install /tmp/integration-for-szamlazzhu-fluentcart.zip --force --activate"
+ssh "$SSH_CONNECTION" "cd $WP_PATH && sudo chown www-data:www-data /tmp/integration-for-szamlazzhu-fluentcart.zip && sudo -u www-data wp plugin install /tmp/integration-for-szamlazzhu-fluentcart.zip --force --activate"
 
 if [ $? -ne 0 ]; then
     echo "Error: Failed to install plugin"
