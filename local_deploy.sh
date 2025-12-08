@@ -24,7 +24,8 @@ fi
 
 # Copy to local WP path
 echo "Copying to local WordPress installation..."
-cp integration-for-szamlazzhu-fluentcart.zip "$WP_PATH/"
+sudo cp integration-for-szamlazzhu-fluentcart.zip "$WP_PATH/"
+sudo chown www-data:www-data $WP_PATH/integration-for-szamlazzhu-fluentcart.zip 
 
 if [ $? -ne 0 ]; then
     echo "Error: Failed to copy zip file to $WP_PATH"
@@ -33,7 +34,7 @@ fi
 
 # Install via WP CLI
 echo "Installing plugin via WP CLI..."
-cd "$WP_PATH" && wp plugin install integration-for-szamlazzhu-fluentcart.zip --force --activate
+cd "$WP_PATH" && sudo -u www-data wp plugin install integration-for-szamlazzhu-fluentcart.zip --force --activate
 
 if [ $? -ne 0 ]; then
     echo "Error: Failed to install plugin"
