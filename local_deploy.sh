@@ -11,6 +11,8 @@ if [ -z "$WP_PATH" ]; then
     exit 1
 fi
 
+git pull
+
 # Create zip file
 echo "Creating zip package..."
 ./pack.sh
