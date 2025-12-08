@@ -2,10 +2,10 @@
 namespace SzamlazzHuFluentCart;
 
 function init_paths() {
-    $suffix = get_option('szamlazz_hu_folder_suffix', '');
+    $suffix = \get_option('szamlazz_hu_folder_suffix', '');
     if (empty($suffix)) {
         $suffix = substr(bin2hex(random_bytes(4)), 0, 8);
-        update_option('szamlazz_hu_folder_suffix', $suffix);
+        \update_option('szamlazz_hu_folder_suffix', $suffix);
     }
     
     $cache_dir = WP_CONTENT_DIR . DIRECTORY_SEPARATOR . 'cache';
@@ -18,17 +18,17 @@ function init_paths() {
     ];
     
     if (!file_exists($cache_dir)) {
-        wp_mkdir_p($cache_dir);
+        \wp_mkdir_p($cache_dir);
     }
     
     if (!file_exists($base_path)) {
-        wp_mkdir_p($base_path);
+        \wp_mkdir_p($base_path);
     }
     
     foreach ($required_folders as $folder) {
         $folder_path = $base_path . DIRECTORY_SEPARATOR . $folder;
         if (!file_exists($folder_path)) {
-            wp_mkdir_p($folder_path);
+            \wp_mkdir_p($folder_path);
         }
     }
     
@@ -36,7 +36,7 @@ function init_paths() {
 }
 
 function get_cache_path() {
-    $suffix = get_option('szamlazz_hu_folder_suffix', '');
+    $suffix = \get_option('szamlazz_hu_folder_suffix', '');
     if (empty($suffix)) {
         return null;
     }
@@ -70,7 +70,7 @@ function clear_cache() {
     
     if ($cache_path && file_exists($cache_path)) {
         require_once(ABSPATH . 'wp-admin/includes/file.php');
-        WP_Filesystem();
+        \WP_Filesystem();
         global $wp_filesystem;
         
         $iterator = new \RecursiveIteratorIterator(
@@ -89,7 +89,7 @@ function clear_cache() {
         $wp_filesystem->rmdir($cache_path);
     }
     
-    delete_option('szamlazz_hu_folder_suffix');
+    \delete_option('szamlazz_hu_folder_suffix');
 }
 
 function get_pdf_path($invoice_number) {
