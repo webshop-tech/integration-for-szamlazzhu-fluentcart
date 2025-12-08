@@ -34,7 +34,7 @@ fi
 
 # Install via WP CLI
 echo "Installing plugin via WP CLI..."
-cd "$WP_PATH" && sudo -u www-data wp plugin install integration-for-szamlazzhu-fluentcart.zip --force --activate
+cd "$WP_PATH" && sudo -u www-data wp plugin install ./integration-for-szamlazzhu-fluentcart.zip --force --activate
 
 if [ $? -ne 0 ]; then
     echo "Error: Failed to install plugin"
