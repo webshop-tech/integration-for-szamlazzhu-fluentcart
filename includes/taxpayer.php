@@ -1,0 +1,120 @@
+<?php
+
+namespace SzamlazzHuFluentCart;
+
+if (!\defined('ABSPATH')) {
+    exit;
+}
+
+function build_taxpayer_xml($api_key, $tax_number) {
+    $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><xmltaxpayer xmlns="http://www.szamlazz.hu/xmltaxpayer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmltaxpayer http://www.szamlazz.hu/docs/xsds/agent/xmltaxpayer.xsd"></xmltaxpayer>');
+    
+    $beallitasok = $xml->addChild('beallitasok');
+    $beallitasok->addChild('szamlaagentkulcs', $api_key);
+    
+    $xml->addChild('torzsszam', substr($tax_number, 0, 8));
+    
+    return $xml->asXML();
+}
+
+function get_taxpayer_api($order_id, $api_key, $tax_number) {
+    $xml_string = build_taxpayer_xml($api_key, $tax_number);
+    
+    $multipart = build_multipart_body($xml_string, 'action-szamla_agent_taxpayer');
+    
+    $response = \wp_remote_post('https://www.szamlazz.hu/szamla/', array(
+        'timeout' => 30,
+        'headers' => array(
+            'Content-Type' => 'multipart/form-data; boundary=' . $multipart['boundary'],
+        ),
+        'body' => $multipart['body'],
+    ));
+    
+    if (\is_wp_error($response)) {
+        return $response;
+    }
+    
+    $response_code = \wp_remote_retrieve_response_code($response);
+    $response_body = \wp_remote_retrieve_body($response);
+    
+    if ($response_code !== 200) {
+        return create_error($order_id, 'api_error', 'Taxpayer API returned error code', $response_code);
+    }
+    
+    try {
+        $xml = new \SimpleXMLElement($response_body);
+        
+        $xml->registerXPathNamespace('ns2', 'http://schemas.nav.gov.hu/OSA/3.0/api');
+        $xml->registerXPathNamespace('ns3', 'http://schemas.nav.gov.hu/OSA/3.0/base');
+        
+        $taxpayerValidity = $xml->xpath('//ns2:taxpayerValidity');
+        if (empty($taxpayerValidity) || "true" !== (string)$taxpayerValidity[0]) {
+            return create_error($order_id, 'invalid_taxpayer', 'Taxpayer is not valid');
+        }
+        
+        $data = array(
+            'valid' => true,
+            'xml' => $response_body,
+        );
+        
+        $taxpayer_short_name = $xml->xpath('//ns2:taxpayerShortName');
+        $taxpayer_name = $xml->xpath('//ns2:taxpayerName');
+        
+        if (!empty($taxpayer_short_name)) {
+            $data['name'] = (string)$taxpayer_short_name[0];
+        } elseif (!empty($taxpayer_name)) {
+            $data['name'] = (string)$taxpayer_name[0];
+        }
+        
+        $taxpayer_id = $xml->xpath('//ns3:taxpayerId');
+        $vat_code = $xml->xpath('//ns3:vatCode');
+        $county_code = $xml->xpath('//ns3:countyCode');
+        
+        if (!empty($taxpayer_id) && !empty($vat_code) && !empty($county_code)) {
+            $data['vat_id'] = sprintf(
+                '%s-%s-%s',
+                (string)$taxpayer_id[0],
+                (string)$vat_code[0],
+                (string)$county_code[0]
+            );
+        }
+        
+        $postal_code = $xml->xpath('//ns3:postalCode');
+        $city = $xml->xpath('//ns3:city');
+        $street_name = $xml->xpath('//ns3:streetName');
+        $public_place = $xml->xpath('//ns3:publicPlaceCategory');
+        $number = $xml->xpath('//ns3:number');
+        $door = $xml->xpath('//ns3:door');
+        
+        if (!empty($postal_code)) {
+            $data['postcode'] = (string)$postal_code[0];
+        }
+        
+        if (!empty($city)) {
+            $data['city'] = (string)$city[0];
+        }
+        
+        if (!empty($street_name)) {
+            $address_parts = [(string)$street_name[0]];
+            
+            if (!empty($public_place)) {
+                $address_parts[] = (string)$public_place[0];
+            }
+            
+            if (!empty($number)) {
+                $address_parts[] = (string)$number[0];
+            }
+            
+            if (!empty($door)) {
+                $address_parts[] = (string)$door[0];
+            }
+            
+            $data['address'] = implode(' ', $address_parts);
+        }
+        
+        return $data;
+        
+    } catch (\Exception $e) {
+        return create_error($order_id, 'parse_error', 'Failed to parse taxpayer XML', $e->getMessage());
+    }
+}
