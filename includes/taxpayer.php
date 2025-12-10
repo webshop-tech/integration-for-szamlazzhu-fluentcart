@@ -6,19 +6,29 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 
-function build_taxpayer_xml($api_key, $tax_number) {
+function build_taxpayer_xml($api_key, $vat_id_base) {
     $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><xmltaxpayer xmlns="http://www.szamlazz.hu/xmltaxpayer" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmltaxpayer http://www.szamlazz.hu/docs/xsds/agent/xmltaxpayer.xsd"></xmltaxpayer>');
     
     $beallitasok = $xml->addChild('beallitasok');
     $beallitasok->addChild('szamlaagentkulcs', $api_key);
     
-    $xml->addChild('torzsszam', substr($tax_number, 0, 8));
+    $xml->addChild('torzsszam', substr($vat_id_base, 0, 8));
     
     return $xml->asXML();
 }
 
-function get_taxpayer_api($order_id, $api_key, $tax_number) {
-    $xml_string = build_taxpayer_xml($api_key, $tax_number);
+function remove_leading_letters($vat_id) {
+    if (\strlen($vat_id) >= 2 && \ctype_alpha(\substr($vat_id, 0, 2))) {
+        return \substr($vat_id, 2);
+    }
+    return $vat_id;
+}
+
+function get_taxpayer_api($order_id, $api_key, $vat_id) {
+    $vatParts = explode('-', remove_leading_letters($vat_id));
+    $vat_id_base = $vatParts[0];
+    
+    $xml_string = build_taxpayer_xml($api_key, $vat_id_base);
     
     $multipart = build_multipart_body($xml_string, 'action-szamla_agent_taxpayer');
     

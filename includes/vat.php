@@ -42,10 +42,7 @@ function handleVatValidation() {
         \wp_send_json(['message' => __('Számlázz.hu API key is not configured', 'fluent-cart')], 422);
     }
     
-    $vatParts = explode('-', $vatNumber);
-    $taxNumberToValidate = $vatParts[0];
-    
-    $taxPayerData = get_taxpayer_api(0, $api_key, $taxNumberToValidate);
+    $taxPayerData = get_taxpayer_api(0, $api_key, $vatNumber);
     
     if (\is_wp_error($taxPayerData)) {
         \wp_send_json(['message' => $taxPayerData->get_error_message()], 422);
