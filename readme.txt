@@ -2,9 +2,9 @@
 Contributors: gaborangyal
 Tags: szamlazz.hu, fluentcart, invoice, magyar, szamlazo
 Requires at least: 6.2
-Tested up to: 6.8
+Tested up to: 6.9.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,7 +88,6 @@ The plugin sends the following data to https://www.szamlazz.hu/szamla/ when:
 = Limitations =
 
 * **VAT Rates**: Only explicit rates supported (0%, 5%, 18%, 27%). Named VAT keys (AAM, TAM, TEHK) are not supported.
-* **B2B Sales**: Buyers must have an EU VAT ID. Local VAT ID only is not yet supported.
 * **Document Types**: Only Invoices can be generated. Receipts and Pro forma invoices are not supported.
 * **IPN**: Instant Payment Notification is not yet supported.
 * **Lag**: Customers might need to wait a few seconds on the order conrifmation page before being able to download the invoice.
@@ -119,6 +118,11 @@ The interface language follows your WordPress language settings.
 1. Plugin settings page
 
 == Changelog ==
+
+= 1.1.0 =
+* Support both EU and Hungarian VAT IDs
+* Tested with WordPress 6.9.1
+* Tested with FluentCart 1.3.10
 
 = 1.0.0 =
 * Initial release

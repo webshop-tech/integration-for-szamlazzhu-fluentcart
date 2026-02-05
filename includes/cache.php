@@ -1,6 +1,10 @@
 <?php
 namespace SzamlazzHuFluentCart;
 
+if (!\defined('ABSPATH')) {
+	exit;
+}
+
 function init_paths(): string {
     $suffix = \get_option('szamlazz_hu_folder_suffix', '');
     if (empty($suffix)) {

@@ -4,7 +4,7 @@ namespace SzamlazzHuFluentCart;
 
 use FluentCart\App\Models\TaxRate;
 
-if (!\defined('ABSPATH')) {
+if (!defined('ABSPATH')) {
     exit;
 }
 
