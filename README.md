@@ -15,7 +15,7 @@ A WordPress plugin that automatically generates invoices on Számlázz.hu for Fl
 
 ## Requirements
 
-- WordPress 5.0 or higher
+- WordPress 6.2 or higher
 - FluentCart plugin installed and activated
 - Active Számlázz.hu account with Agent API Key
 - PHP 7.4 or higher
@@ -162,11 +162,6 @@ Please be aware of the following limitations:
 - Only explicit VAT rates are supported: **0%, 5%, 18%, 27%**
 - Named VAT keys like AAM, TAM, TEHK are **not supported**
 - Use **0%** as a substitute for special VAT categories (AAM, TAM, TEHK)
-
-### B2B Sales
-- For B2B (business-to-business) sales, the buyer **must have an EU VAT ID**
-- Buyers with **local VAT ID only** are not yet supported
-- The plugin validates and fetches company data from the Hungarian NAV database for EU VAT IDs
 
 ### Document Types
 - Only **Invoices** can be generated
