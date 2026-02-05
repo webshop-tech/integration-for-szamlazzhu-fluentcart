@@ -6,7 +6,7 @@ if (!\defined('ABSPATH')) {
     exit;
 }
 
-function build_multipart_body($xml_string, $field_name) {
+function build_multipart_body($xml_string, $field_name): array {
     $boundary = wp_generate_password(24, false);
     $body = '';
     

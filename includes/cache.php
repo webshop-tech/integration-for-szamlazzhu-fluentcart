@@ -1,7 +1,7 @@
 <?php
 namespace SzamlazzHuFluentCart;
 
-function init_paths() {
+function init_paths(): string {
     $suffix = \get_option('szamlazz_hu_folder_suffix', '');
     if (empty($suffix)) {
         $suffix = substr(bin2hex(random_bytes(4)), 0, 8);
