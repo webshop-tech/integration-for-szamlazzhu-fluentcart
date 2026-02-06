@@ -37,7 +37,7 @@ const INVOICE_TYPE_E_INVOICE = 2;
     \register_setting('szamlazz_hu_fluentcart_settings', 'szamlazz_hu_agent_api_key', [
         'type' => 'string',
         'sanitize_callback' => function($value) {
-            return sanitize_text_field(trim($value));
+            return is_string($value) ? trim(wp_unslash($value)) : '';
         }
     ]);
     \register_setting('szamlazz_hu_fluentcart_settings', 'szamlazz_hu_shipping_vat', [
