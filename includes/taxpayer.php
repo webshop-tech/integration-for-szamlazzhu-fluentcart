@@ -25,6 +25,13 @@ function remove_leading_letters($vat_id) {
 }
 
 function get_taxpayer_api($order_id, $api_key, $vat_id) {
+	$cache_key = 'szamlazz_hu_taxpayer_' . sanitize_key($vat_id);
+	$cached_result = wp_cache_get($cache_key);
+
+	if (false !== $cached_result) {
+		write_log($order_id, 'Taxpayer data found in cache', 'VAT number', $vat_id);
+		return $cached_result;
+	}
     $vatParts = explode('-', remove_leading_letters($vat_id));
     $vat_id_base = $vatParts[0];
     
@@ -121,7 +128,9 @@ function get_taxpayer_api($order_id, $api_key, $vat_id) {
             
             $data['address'] = implode(' ', $address_parts);
         }
-        
+
+	    wp_cache_set($cache_key, $data, '', HOUR_IN_SECONDS);
+
         return $data;
         
     } catch (\Exception $e) {
