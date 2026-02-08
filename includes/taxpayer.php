@@ -24,9 +24,23 @@ function remove_leading_letters($vat_id) {
     return $vat_id;
 }
 
+function get_vat_data($key) {
+	if (wp_using_ext_object_cache()) {
+		return wp_cache_get($key, 'szamlazzhu');
+	}
+	return get_transient('szamlazzhu_' . $key);
+}
+
+function set_vat_data($key, $value): bool {
+	if (wp_using_ext_object_cache()) {
+		return wp_cache_set($key, $value, 'szamlazzhu', HOUR_IN_SECONDS);
+	}
+	return set_transient('szamlazzhu_' . $key, $value, HOUR_IN_SECONDS);
+}
+
 function get_taxpayer_api($order_id, $api_key, $vat_id) {
-	$cache_key = 'szamlazz_hu_taxpayer_' . sanitize_key($vat_id);
-	$cached_result = wp_cache_get($cache_key);
+	$cache_key = sanitize_key($vat_id);
+	$cached_result = get_vat_data($cache_key);
 
 	if (false !== $cached_result) {
 		write_log($order_id, 'Taxpayer data found in cache', 'VAT number', $vat_id);
@@ -71,7 +85,6 @@ function get_taxpayer_api($order_id, $api_key, $vat_id) {
         
         $data = array(
             'valid' => true,
-            'xml' => $response_body,
         );
         
         $taxpayer_short_name = $xml->xpath('//ns2:taxpayerShortName');
@@ -129,7 +142,7 @@ function get_taxpayer_api($order_id, $api_key, $vat_id) {
             $data['address'] = implode(' ', $address_parts);
         }
 
-	    wp_cache_set($cache_key, $data, '', HOUR_IN_SECONDS);
+	    set_vat_data($cache_key, $data);
 
         return $data;
         
