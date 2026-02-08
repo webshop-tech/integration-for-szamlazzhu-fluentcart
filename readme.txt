@@ -121,6 +121,7 @@ The interface language follows your WordPress language settings.
 
 = 1.1.1 =
 * Support coupons
+* Bugfixes, performance improvements
 
 = 1.1.0 =
 * Support both EU and Hungarian VAT IDs
