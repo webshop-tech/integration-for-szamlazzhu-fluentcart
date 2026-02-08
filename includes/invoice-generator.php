@@ -145,13 +145,14 @@ function build_order_items_data($order, $current_order_id) {
         }
         
         $net_price = $order_item->line_total / 100;
+		$unit_price = $net_price / $order_item->quantity;
         $gross_amount = $net_price + $tax_amount;
         
         $items_data[] = array(
             'name' => $order_item->title,
             'quantity' => $order_item->quantity,
             'unit' => $quantity_unit,
-            'unit_price' => $order_item->unit_price / 100,
+            'unit_price' => $unit_price,
             'vat_rate' => $taxRate,
             'net_price' => $net_price,
             'vat_amount' => $tax_amount,

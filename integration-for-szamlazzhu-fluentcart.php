@@ -3,7 +3,7 @@
  * Plugin Name: Integration for Számlázz.hu and FluentCart
  * Plugin URI: https://webshop.tech/integration-for-szamlazzhu-fluentcart/
  * Description: Generates invoices on Számlázz.hu for FluentCart orders
- * Version: 1.1.0
+ * Version: 1.1.1
  * Author: Gábor Angyal
  * Author URI: https://webshop.tech
  * License: GPL v2 or later
