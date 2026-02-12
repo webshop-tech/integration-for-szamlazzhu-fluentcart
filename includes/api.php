@@ -113,19 +113,18 @@ function build_invoice_xml($params) {
     return $xml->asXML();
 }
 
-function build_cancel_invoice_xml($params) {
+function build_cancel_invoice_xml($api_key, $invoice_number) {
     $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><xmlszamlast xmlns="http://www.szamlazz.hu/xmlszamlast" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlast https://www.szamlazz.hu/szamla/docs/xsds/agentst/xmlszamlast.xsd"></xmlszamlast>');
     
     $beallitasok = $xml->addChild('beallitasok');
-    $beallitasok->addChild('szamlaagentkulcs', $params['api_key']);
-    $beallitasok->addChild('valaszVerzio', '2');
+    $beallitasok->addChild('szamlaagentkulcs', $api_key);
+    $e_invoice = get_option('szamlazz_hu_invoice_type', '1') == strval(INVOICE_TYPE_E_INVOICE);
+    $beallitasok->addChild('eszamla', $e_invoice ? 'true' : 'false');
+    $beallitasok->addChild('szamlaLetoltes', 'false');
+
     
     $fejlec = $xml->addChild('fejlec');
-    $fejlec->addChild('szamlaszam', $params['invoice_number']);
-    
-    if (!empty($params['cancellation_reason'])) {
-        $fejlec->addChild('megjegyzes', $params['cancellation_reason']);
-    }
+    $fejlec->addChild('szamlaszam', $invoice_number);
     
     return $xml->asXML();
 }
@@ -252,17 +251,8 @@ function fetch_invoice_pdf($order_id, $api_key, $invoice_number) {
     }
 }
 
-function cancel_invoice_api($order_id, $api_key, $invoice_number, $cancellation_reason = '') {
-    $params = array(
-        'api_key' => $api_key,
-        'invoice_number' => $invoice_number,
-    );
-    
-    if (!empty($cancellation_reason)) {
-        $params['cancellation_reason'] = $cancellation_reason;
-    }
-    
-    $xml_string = build_cancel_invoice_xml($params);
+function cancel_invoice_api($order_id, $api_key, $invoice_number) {
+    $xml_string = build_cancel_invoice_xml($api_key, $invoice_number);
     
     $multipart = build_multipart_body($xml_string, 'action-szamla_agent_szamla_torles');
     

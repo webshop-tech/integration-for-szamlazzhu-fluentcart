@@ -249,11 +249,11 @@ function generate_invoice($order, $current_order_id) {
     
     $seller_data = create_seller_data($current_order_id);
     
-    $invoice_type = \get_option('szamlazz_hu_invoice_type', 1);
+    $invoice_type = \get_option('szamlazz_hu_invoice_type', '1');
     
     $invoice_language = \get_option('szamlazz_hu_invoice_language', 'hu');
     
-    $invoice_type_name = ($invoice_type == 2) ? 'E-Invoice' : 'Paper Invoice';
+    $invoice_type_name = ($invoice_type == strval(INVOICE_TYPE_E_INVOICE)) ? 'E-Invoice' : 'Paper Invoice';
     write_log($order_id, 'Invoice type set to', $invoice_type_name);
     write_log($order_id, 'Invoice language set to', $invoice_language);
     

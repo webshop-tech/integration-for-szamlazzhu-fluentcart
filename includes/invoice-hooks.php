@@ -19,6 +19,19 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     }
 }, 10, 1);
 
+\add_action('fluent_cart/order_refunded', function($data) {
+    $order = $data['order'];
+    $order_id = $order->id;
+    write_log($order_id, 'fluent_cart/order_refunded', 'Order ID', $order_id);
+    if ($data['type'] == 'full') {
+        $api_key = \get_option('szamlazz_hu_agent_api_key', '');
+        $invoice_number = get_invoice_number_by_order_id($order_id);
+        cancel_invoice_api($order_id, $api_key, $invoice_number);
+    } else {
+        log_activity($order_id, false, "Partial refund is not supported yet. Create invoice manually.");
+    }
+}, 10, 1);
+
 \add_action('fluent_cart/payment_status_changed_to_paid', function($data) {
     $order = $data['order'];
     create_invoice($order);
