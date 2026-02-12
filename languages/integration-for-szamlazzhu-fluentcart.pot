@@ -10,166 +10,202 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language-Team: \n"
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings.php
 msgid "Számlázz.hu for FluentCart Settings"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings.php
 msgid "Settings"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings.php
 msgid "Cache cleared successfully"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings.php
 msgid "Shipping VAT rate applied to all tax rates successfully"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
+msgid "API Settings"
+msgstr ""
+
+#: includes/settings-fields.php
 msgid "Enter your Számlázz.hu API credentials below."
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Agent API Key"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "What is this?"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Shipping VAT Rate"
-msgstr ""
-
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Apply to Tax Rates"
-msgstr ""
-
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Warning:"
-msgstr ""
-
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "No tax rates found. Please configure tax rates in FluentCart first."
-msgstr ""
-
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "All tax rates are already set to"
-msgstr ""
-
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Current shipping VAT rates in use:"
-msgstr ""
-
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Invoice Settings"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Invoice Language"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Invoice Type"
-msgstr ""
-
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Paper Invoice"
-msgstr ""
-
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "E-Invoice"
-msgstr ""
-
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Quantity Unit"
-msgstr ""
-
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Shipping Title"
-msgstr ""
-
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Magyar (Hungarian)"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "English"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Deutsch (German)"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Italiano (Italian)"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Română (Romanian)"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Slovenčina (Slovak)"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Hrvatski (Croatian)"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Français (French)"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Español (Spanish)"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Čeština (Czech)"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
 msgid "Polski (Polish)"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Cache Management"
+#: includes/settings-fields.php
+msgid "Invoice Type"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Current cache size:"
+#: includes/settings-fields.php
+msgid "Paper Invoice"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Clear Cache"
+#: includes/settings-fields.php
+msgid "E-Invoice"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Clearing the cache will delete all cached PDFs, XMLs, and logs."
+#: includes/settings-fields.php
+msgid "Quantity Unit"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Settings Saved"
+#: includes/settings-fields.php
+msgid "Shipping Title"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "Save Settings"
+#: includes/settings-fields.php
+msgid "Shipping VAT Rate"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-fields.php
+msgid "Apply to Tax Rates"
+msgstr ""
+
+#: includes/settings-fields.php
+msgid "Warning:"
+msgstr ""
+
+#: includes/settings-fields.php
+msgid "No tax rates found. Please configure tax rates in FluentCart first."
+msgstr ""
+
+#: includes/settings-fields.php
+msgid "All tax rates are already set to"
+msgstr ""
+
+#: includes/settings-fields.php
+msgid "Current shipping VAT rates in use:"
+msgstr ""
+
+#: includes/settings-fields.php
+msgid "Vat Exempt"
+msgstr ""
+
+#: includes/settings-fields.php
+msgid "I am exempt from Hungarian VAT."
+msgstr ""
+
+#: includes/settings-fields.php
+msgid "Zero-Value Invoice"
+msgstr ""
+
+#: includes/settings-fields.php
+msgid "Create invoice when cart total is zero."
+msgstr ""
+
+#: includes/settings-page.php
 msgid "Actions"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-page.php
+msgid "Cache Management"
+msgstr ""
+
+#: includes/settings-page.php
+msgid "Current cache size:"
+msgstr ""
+
+#: includes/settings-page.php
+msgid "Clearing the cache will delete all cached PDFs, XMLs, and logs."
+msgstr ""
+
+#: includes/settings-page.php
+msgid "Clear Cache"
+msgstr ""
+
+#: includes/settings-page.php
+msgid "Save Settings"
+msgstr ""
+
+#: includes/settings-page.php
 msgid "Shipping VAT Settings"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
+#: includes/settings-page.php
 msgid "Apply Shipping VAT to All Tax Rates"
 msgstr ""
 
-#: integration-for-szamlazzhu-fluentcart.php
-msgid "API Settings"
+#: includes/vat.php
+msgid "Hungarian VAT ID"
+msgstr ""
+
+#: includes/vat.php
+msgid "Security check failed"
+msgstr ""
+
+#: includes/vat.php
+msgid "VAT number is required"
+msgstr ""
+
+#: includes/vat.php
+msgid "Számlázz.hu API key is not configured"
+msgstr ""
+
+#: includes/vat.php
+msgid "VAT number is not valid!"
+msgstr ""
+
+#: includes/vat.php
+msgid "VAT has been applied successfully"
 msgstr ""
