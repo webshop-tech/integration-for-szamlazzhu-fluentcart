@@ -293,6 +293,6 @@ function cancel_invoice_api($order_id, $api_key, $invoice_number) {
         );
         
     } catch (\Exception $e) {
-        return create_error($order_id, 'parse_error', 'Failed to parse cancellation response XML', $e->getMessage());
+        return create_error($order_id, 'parse_error', 'Failed to parse cancellation response XML', $e->getMessage(), $response_body);
     }
 }
