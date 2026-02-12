@@ -138,14 +138,18 @@ function build_order_items_data($order, $current_order_id) {
     foreach ($items as $order_item) {
         $taxRate = "0";
         $tax_amount = 0;
-        
-        if ($order->tax_behavior != 0) {
-            if (isset($order_item->line_meta['tax_config']['rates'][0]['rate'])) {
-                $taxRate = $order_item->line_meta['tax_config']['rates'][0]['rate'];
+
+        if (\get_option('billingo_fluentcart_tax_exempt', '0') == '1') {
+            $taxRate = "AAM";
+        } else {
+            if ($order->tax_behavior != 0) {
+                if (isset($order_item->line_meta['tax_config']['rates'][0]['rate'])) {
+                    $taxRate = $order_item->line_meta['tax_config']['rates'][0]['rate'];
+                }
+                $tax_amount = $order_item->tax_amount / 100;
             }
-            $tax_amount = $order_item->tax_amount / 100;
         }
-        
+
         $net_price = $order_item->line_total / 100;
 		$unit_price = $net_price / $order_item->quantity;
         $gross_amount = $net_price + $tax_amount;
@@ -185,11 +189,15 @@ function build_order_items_data($order, $current_order_id) {
         $shipping_net = $order->shipping_total / 100;
         $shipping_vat_amount = 0;
         $shipping_vat_rate = "0";
-        
-        if ($order->tax_behavior != 0) {
-            $shipping_vat = \get_option('szamlazz_hu_shipping_vat', '27');
-            $shipping_vat_rate = strval($shipping_vat);
-            $shipping_vat_amount = $shipping_net * (floatval($shipping_vat) / 100);
+
+        if (\get_option('billingo_fluentcart_tax_exempt', '0') == '1') {
+            $shipping_vat_rate = "AAM";
+        } else {
+            if ($order->tax_behavior != 0) {
+                $shipping_vat = \get_option('szamlazz_hu_shipping_vat', '27');
+                $shipping_vat_rate = strval($shipping_vat);
+                $shipping_vat_amount = $shipping_net * (floatval($shipping_vat) / 100);
+            }
         }
         
         $shipping_gross = $shipping_net + $shipping_vat_amount;
@@ -298,8 +306,13 @@ function generate_invoice($order, $current_order_id) {
     return generate_invoice_api($current_order_id, $api_key, $params);
 }
 
-function create_invoice($order, $main_order = null) {
+function create_invoice($order, $main_order = null): void
+{
     $order_id = $order->id;
+    if ($order->total_amount == 0 && \get_option('szamlazz_hu_zero_invoice', '1') == '0') {
+        write_log($order_id, 'Skipping invoice creation for order with 0 total', 'Order ID', $order_id, 'Main order ID', $main_order->id);
+        return;
+    }
     if ($main_order === null)
         $main_order = $order;
     
