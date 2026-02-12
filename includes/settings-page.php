@@ -27,7 +27,7 @@ function settings_page() {
 
         <?php
         $current_rates = getShippingTaxRates();
-        $selected_vat = \get_option('szamlazz_hu_shipping_vat', 27);
+        $selected_vat = \get_option('szamlazz_hu_shipping_vat', '27');
         $is_button_disabled = empty($current_rates) || (count($current_rates) === 1 && $current_rates[0] == strval($selected_vat));
         ?>
         <form action="<?php echo \esc_url(\admin_url('options-general.php?page=integration-for-szamlazzhu-fluentcart')); ?>" method="post" style="margin-top: 20px;">

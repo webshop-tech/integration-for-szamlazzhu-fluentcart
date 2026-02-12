@@ -75,6 +75,20 @@ const INVOICE_TYPE_E_INVOICE = 2;
         'default' => 'Szállítás',
         'sanitize_callback' => 'sanitize_text_field'
     ]);
+    \register_setting('szamlazz_hu_fluentcart_settings', 'szamlazz_hu_tax_exempt', [
+        'type' => 'boolean',
+        'default' => 0,
+        'sanitize_callback' => function($value) {
+            return $value ? 1 : 0;
+        }
+    ]);
+    \register_setting('szamlazz_hu_fluentcart_settings', 'szamlazz_hu_zero_invoice', [
+        'type' => 'boolean',
+        'default' => 1,
+        'sanitize_callback' => function($value) {
+            return $value ? 1 : 0;
+        }
+    ]);
     
     if (isset($_POST['szamlazz_hu_clear_cache']) && \check_admin_referer('szamlazz_hu_clear_cache_action', 'szamlazz_hu_clear_cache_nonce')) {
         clear_cache();
@@ -82,7 +96,7 @@ const INVOICE_TYPE_E_INVOICE = 2;
     }
     
     if (isset($_POST['szamlazz_hu_apply_shipping_vat']) && \check_admin_referer('szamlazz_hu_apply_shipping_vat_action', 'szamlazz_hu_apply_shipping_vat_nonce')) {
-        $shipping_vat = \get_option('szamlazz_hu_shipping_vat', 27);
+        $shipping_vat = \get_option('szamlazz_hu_shipping_vat', '27');
         setShippingTaxRate($shipping_vat);
         \add_settings_error('szamlazz_hu_messages', 'szamlazz_hu_vat_applied', \__('Shipping VAT rate applied to all tax rates successfully', 'integration-for-szamlazzhu-fluentcart'), 'updated');
     }

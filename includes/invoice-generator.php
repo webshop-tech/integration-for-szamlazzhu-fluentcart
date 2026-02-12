@@ -187,9 +187,9 @@ function build_order_items_data($order, $current_order_id) {
         $shipping_vat_rate = "0";
         
         if ($order->tax_behavior != 0) {
-            $shipping_vat = \get_option('szamlazz_hu_shipping_vat', 27);
+            $shipping_vat = \get_option('szamlazz_hu_shipping_vat', '27');
             $shipping_vat_rate = strval($shipping_vat);
-            $shipping_vat_amount = $shipping_net * ($shipping_vat / 100);
+            $shipping_vat_amount = $shipping_net * (floatval($shipping_vat) / 100);
         }
         
         $shipping_gross = $shipping_net + $shipping_vat_amount;

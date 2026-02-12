@@ -65,14 +65,16 @@ function add_settings_fields(): void
         'szamlazz_hu_invoice_type',
         \__('Invoice Type', 'integration-for-szamlazzhu-fluentcart'),
         function () {
-            $value = \get_option('szamlazz_hu_invoice_type', INVOICE_TYPE_P_INVOICE);
+            $value = \get_option('szamlazz_hu_invoice_type', strval(INVOICE_TYPE_P_INVOICE));
             $types = [
                 INVOICE_TYPE_P_INVOICE => \__('Paper Invoice', 'integration-for-szamlazzhu-fluentcart'),
                 INVOICE_TYPE_E_INVOICE => \__('E-Invoice', 'integration-for-szamlazzhu-fluentcart')
             ];
             echo '<select name="szamlazz_hu_invoice_type">';
             foreach ($types as $type_value => $type_name) {
-                echo '<option value="' . \esc_attr($type_value) . '" ' . ($type_value == $value ? 'selected>' : '>') . \esc_html($type_name) . '</option>';
+                echo '<option value="' . \esc_attr($type_value) . '" ';
+                \selected($value, strval($type_value));
+                echo '>' . \esc_html($type_name) . '</option>';
             }
             echo '</select>';
         },
@@ -106,11 +108,13 @@ function add_settings_fields(): void
         'szamlazz_hu_shipping_vat',
         \__('Shipping VAT Rate', 'integration-for-szamlazzhu-fluentcart'),
         function () {
-            $value = \get_option('szamlazz_hu_shipping_vat', 27);
+            $value = \get_option('szamlazz_hu_shipping_vat', '27');
             $options = [0, 5, 18, 27];
             echo '<select name="szamlazz_hu_shipping_vat">';
             foreach ($options as $option) {
-                echo '<option value="' . \esc_attr($option) . '" ' . ($option == $value ? 'selected>' : '>') . \esc_html($option) . '%</option>';
+                echo '<option value="' . \esc_attr($option) . '" ';
+                \selected($value, strval($option));
+                echo '>' . \esc_html($option) . '%</option>';
             }
             echo '</select>';
         },
@@ -123,7 +127,7 @@ function add_settings_fields(): void
         \__('Apply to Tax Rates', 'integration-for-szamlazzhu-fluentcart'),
         function () {
             $current_rates = getShippingTaxRates();
-            $selected_vat = \get_option('szamlazz_hu_shipping_vat', 27);
+            $selected_vat = \get_option('szamlazz_hu_shipping_vat', '27');
 
             if (empty($current_rates)) {
                 echo '<p class="description" style="color: #dc3232;"><strong>' . \esc_html__('Warning:', 'integration-for-szamlazzhu-fluentcart') . '</strong> ' . \esc_html__('No tax rates found. Please configure tax rates in FluentCart first.', 'integration-for-szamlazzhu-fluentcart') . '</p>';
@@ -132,6 +136,34 @@ function add_settings_fields(): void
             } else {
                 echo '<p class="description">' . \esc_html__('Current shipping VAT rates in use:', 'integration-for-szamlazzhu-fluentcart') . ' ' . \esc_html(\implode(', ', $current_rates)) . '%</p>';
             }
+        },
+        'integration-for-szamlazzhu-fluentcart',
+        'szamlazz_hu_invoice_section'
+    );
+
+    \add_settings_field(
+        'szamlazz_hu_tax_exempt',
+        \__('Vat Exempt', 'integration-for-szamlazzhu-fluentcart'),
+        function () {
+            $value = \get_option('szamlazz_hu_tax_exempt', "0");
+            echo '<input type="checkbox" name="szamlazz_hu_tax_exempt" value="1" ';
+            \checked("1", $value);
+            echo ' />';
+            echo '<label for="szamlazz_hu_tax_exempt">' . \esc_html__('I am exempt from Hungarian VAT.', 'integration-for-szamlazzhu-fluentcart') . '</label>';
+        },
+        'integration-for-szamlazzhu-fluentcart',
+        'szamlazz_hu_invoice_section'
+    );
+
+    \add_settings_field(
+        'szamlazz_hu_zero_invoice',
+        \__('Zero-Value Invoice', 'integration-for-szamlazzhu-fluentcart'),
+        function () {
+            $value = \get_option('szamlazz_hu_zero_invoice', "1");
+            echo '<input type="checkbox" name="szamlazz_hu_zero_invoice" value="1" ';
+            \checked("1", $value);
+            echo ' />';
+            echo '<label for="szamlazz_hu_zero_invoice">' . \esc_html__('Create invoice when cart total is zero.', 'integration-for-szamlazzhu-fluentcart') . '</label>';
         },
         'integration-for-szamlazzhu-fluentcart',
         'szamlazz_hu_invoice_section'
