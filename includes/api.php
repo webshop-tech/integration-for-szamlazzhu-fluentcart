@@ -254,7 +254,7 @@ function fetch_invoice_pdf($order_id, $api_key, $invoice_number) {
 function cancel_invoice_api($order_id, $api_key, $invoice_number) {
     $xml_string = build_cancel_invoice_xml($api_key, $invoice_number);
     
-    $multipart = build_multipart_body($xml_string, 'action-szamla_agent_szamla_torles');
+    $multipart = build_multipart_body($xml_string, 'action-szamla_agent_st');
     
     $response = \wp_remote_post('https://www.szamlazz.hu/szamla/', array(
         'timeout' => 30,
