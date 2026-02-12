@@ -139,7 +139,7 @@ function build_order_items_data($order, $current_order_id) {
         $taxRate = "0";
         $tax_amount = 0;
 
-        if (\get_option('billingo_fluentcart_tax_exempt', '0') == '1') {
+        if (\get_option('szamlazz_hu_tax_exempt', '0') == '1') {
             $taxRate = "AAM";
         } else {
             if ($order->tax_behavior != 0) {
@@ -190,7 +190,7 @@ function build_order_items_data($order, $current_order_id) {
         $shipping_vat_amount = 0;
         $shipping_vat_rate = "0";
 
-        if (\get_option('billingo_fluentcart_tax_exempt', '0') == '1') {
+        if (\get_option('szamlazz_hu_tax_exempt', '0') == '1') {
             $shipping_vat_rate = "AAM";
         } else {
             if ($order->tax_behavior != 0) {
