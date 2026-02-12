@@ -113,6 +113,23 @@ function build_invoice_xml($params) {
     return $xml->asXML();
 }
 
+function build_cancel_invoice_xml($params) {
+    $xml = new \SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><xmlszamlast xmlns="http://www.szamlazz.hu/xmlszamlast" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.szamlazz.hu/xmlszamlast https://www.szamlazz.hu/szamla/docs/xsds/agentst/xmlszamlast.xsd"></xmlszamlast>');
+    
+    $beallitasok = $xml->addChild('beallitasok');
+    $beallitasok->addChild('szamlaagentkulcs', $params['api_key']);
+    $beallitasok->addChild('valaszVerzio', '2');
+    
+    $fejlec = $xml->addChild('fejlec');
+    $fejlec->addChild('szamlaszam', $params['invoice_number']);
+    
+    if (!empty($params['cancellation_reason'])) {
+        $fejlec->addChild('megjegyzes', $params['cancellation_reason']);
+    }
+    
+    return $xml->asXML();
+}
+
 function generate_invoice_api($order_id, $api_key, $params) {
     $params['api_key'] = $api_key;
     
@@ -232,5 +249,60 @@ function fetch_invoice_pdf($order_id, $api_key, $invoice_number) {
         
     } catch (\Exception $e) {
         return create_error($order_id, 'parse_error', 'Failed to parse PDF response XML', $e->getMessage());
+    }
+}
+
+function cancel_invoice_api($order_id, $api_key, $invoice_number, $cancellation_reason = '') {
+    $params = array(
+        'api_key' => $api_key,
+        'invoice_number' => $invoice_number,
+    );
+    
+    if (!empty($cancellation_reason)) {
+        $params['cancellation_reason'] = $cancellation_reason;
+    }
+    
+    $xml_string = build_cancel_invoice_xml($params);
+    
+    $multipart = build_multipart_body($xml_string, 'action-szamla_agent_szamla_torles');
+    
+    $response = \wp_remote_post('https://www.szamlazz.hu/szamla/', array(
+        'timeout' => 30,
+        'headers' => array(
+            'Content-Type' => 'multipart/form-data; boundary=' . $multipart['boundary'],
+        ),
+        'body' => $multipart['body'],
+    ));
+    
+    if (\is_wp_error($response)) {
+        return $response;
+    }
+    
+    $response_code = \wp_remote_retrieve_response_code($response);
+    $response_body = \wp_remote_retrieve_body($response);
+    $response_headers = \wp_remote_retrieve_headers($response);
+    
+    if ($response_code !== 200) {
+        return create_error($order_id, 'api_error', 'API returned error code', $response_code, $response_body);
+    }
+    
+    try {
+        $xml = new \SimpleXMLElement($response_body);
+        
+        $success = (string)$xml->sikeres;
+        $error_code = (string)$xml->hibakod;
+        $error_message = (string)$xml->hibauzenet;
+        
+        if ($success === 'false' || !empty($error_code)) {
+            return create_error($order_id, 'api_error', sprintf('Invoice cancellation failed [%s]', $error_code), $error_message);
+        }
+        
+        return array(
+            'success' => true,
+            'invoice_number' => $invoice_number,
+        );
+        
+    } catch (\Exception $e) {
+        return create_error($order_id, 'parse_error', 'Failed to parse cancellation response XML', $e->getMessage());
     }
 }
