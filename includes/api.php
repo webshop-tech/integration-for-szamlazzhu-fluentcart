@@ -118,10 +118,10 @@ function build_cancel_invoice_xml($api_key, $invoice_number) {
     
     $beallitasok = $xml->addChild('beallitasok');
     $beallitasok->addChild('szamlaagentkulcs', $api_key);
-    $beallitasok->addChild('valaszVerzio', '2');
     $e_invoice = get_option('szamlazz_hu_invoice_type', '1') == strval(INVOICE_TYPE_E_INVOICE);
     $beallitasok->addChild('eszamla', $e_invoice ? 'true' : 'false');
     $beallitasok->addChild('szamlaLetoltes', 'false');
+    $beallitasok->addChild('valaszVerzio', '2');
 
     
     $fejlec = $xml->addChild('fejlec');

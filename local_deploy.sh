@@ -43,6 +43,6 @@ fi
 
 # Cleanup
 echo "Cleaning up..."
-rm "$WP_PATH/integration-for-szamlazzhu-fluentcart.zip"
+sudo rm "$WP_PATH/integration-for-szamlazzhu-fluentcart.zip"
 
 echo "Local deployment completed successfully!"
