@@ -8,7 +8,8 @@ if (!defined('ABSPATH')) {
 
 use FluentCart\App\Models\Activity;
 
-function write_log($order_id, $message, ...$args) {
+function write_log($order_id, $message, ...$args): void
+{
     if (!\defined('WP_DEBUG') || !WP_DEBUG) {
         return;
     }
@@ -30,7 +31,8 @@ function write_log($order_id, $message, ...$args) {
     ]);
 }
 
-function create_error($order_id, $code, $message, ...$args) {
+function create_error($order_id, $code, $message, ...$args): \WP_Error
+{
     if (!empty($args)) {
         $formatted_message = $message . ': ' . \implode(', ', $args);
     } else {
@@ -42,14 +44,16 @@ function create_error($order_id, $code, $message, ...$args) {
     return new \WP_Error($code, $formatted_message);
 }
 
-function write_error_to_log($order_id, $error) {
+function write_error_to_log($order_id, $error): void
+{
     $error_code = $error->get_error_code();
     $error_message = $error->get_error_message();
     
     write_log($order_id, 'Error', $error_code, $error_message);
 }
 
-function serve_pdf_download($file_path = null, $pdf_data = null, $filename = 'invoice.pdf') {
+function serve_pdf_download($file_path = null, $pdf_data = null, $filename = 'invoice.pdf'): void
+{
     if ($file_path && \file_exists($file_path)) {
         require_once(ABSPATH . 'wp-admin/includes/file.php');
         WP_Filesystem();
@@ -73,14 +77,4 @@ function serve_pdf_download($file_path = null, $pdf_data = null, $filename = 'in
     // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
     echo $content;
     exit;
-}
-
-function format_bytes($bytes, $precision = 2) {
-    $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-    
-    for ($i = 0; $bytes > 1024 && $i < count($units) - 1; $i++) {
-        $bytes /= 1024;
-    }
-    
-    return round($bytes, $precision) . ' ' . $units[$i];
 }
