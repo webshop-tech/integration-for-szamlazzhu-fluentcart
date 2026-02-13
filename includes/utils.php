@@ -8,25 +8,35 @@ if (!defined('ABSPATH')) {
 
 use FluentCart\App\Models\Activity;
 
-function write_log($order_id, $message, ...$args): void
+function debug_log($order_id, $message, ...$args): void
 {
     if (!\defined('WP_DEBUG') || !WP_DEBUG) {
         return;
     }
-    
+
+    write_order_log($order_id, 'Számlázz.hu debug info', $message, ...$args);
+}
+
+function log_activity($order_id, $success, $message): void
+{
+    write_order_log($order_id, $success ? 'Számlázz.hu invoice successfully generated' : 'Számlázz.hu invoice generation failed', $message);
+}
+
+function write_order_log($order_id, $title, $message, ...$args): void
+{
     if (!empty($args)) {
         $formatted_message = $message . ', ' . \implode(', ', $args);
     } else {
         $formatted_message = $message;
     }
-    
+
     Activity::create([
         'status' => 'info',
         'log_type' => 'activity',
         'module_type' => 'FluentCart\App\Models\Order',
         'module_id' => $order_id,
         'module_name' => 'order',
-        'title' => 'Számlázz.hu debug info',
+        'title' => $title,
         'content' => $formatted_message
     ]);
 }
@@ -38,8 +48,8 @@ function create_error($order_id, $code, $message, ...$args): \WP_Error
     } else {
         $formatted_message = $message;
     }
-    
-    write_log($order_id, 'Error', $code, $formatted_message);
+
+    write_order_log($order_id, 'Error', $code, $formatted_message);
     
     return new \WP_Error($code, $formatted_message);
 }
@@ -49,7 +59,7 @@ function write_error_to_log($order_id, $error): void
     $error_code = $error->get_error_code();
     $error_message = $error->get_error_message();
     
-    write_log($order_id, 'Error', $error_code, $error_message);
+    debug_log($order_id, 'Error', $error_code, $error_message);
 }
 
 function serve_pdf_download($file_path = null, $pdf_data = null, $filename = 'invoice.pdf'): void

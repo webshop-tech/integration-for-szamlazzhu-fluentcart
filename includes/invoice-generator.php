@@ -13,38 +13,24 @@ use FluentCart\App\Models\OrderItem;
 
 function get_taxpayer_data($order_id, $api_key, $vat_number) {
     try {
-        write_log($order_id, 'Fetching taxpayer data from NAV', 'VAT number', $vat_number);
+        debug_log($order_id, 'Fetching taxpayer data from NAV', 'VAT number', $vat_number);
         
         $taxpayer_data = get_taxpayer_api($order_id, $api_key, $vat_number);
         
         if (\is_wp_error($taxpayer_data)) {
-            write_log($order_id, 'Failed to fetch taxpayer data', 'Error', $taxpayer_data->get_error_message());
+            debug_log($order_id, 'Failed to fetch taxpayer data', 'Error', $taxpayer_data->get_error_message());
             return null;
         }
         
         if (!empty($taxpayer_data['valid'])) {
-            write_log($order_id, 'Taxpayer is valid');
-            
-            if (isset($taxpayer_data['name'])) {
-                write_log($order_id, 'Taxpayer name extracted', 'Name', $taxpayer_data['name']);
-            }
-            if (isset($taxpayer_data['vat_id'])) {
-                write_log($order_id, 'VAT ID formatted', $taxpayer_data['vat_id']);
-            }
-            if (isset($taxpayer_data['postcode']) && isset($taxpayer_data['city']) && isset($taxpayer_data['address'])) {
-                write_log($order_id, 'Taxpayer address extracted', $taxpayer_data['postcode'], $taxpayer_data['city'], $taxpayer_data['address']);
-            }
-            
-            write_log($order_id, 'Taxpayer data successfully parsed from NAV');
-            
             return $taxpayer_data;
         }
         
-        write_log($order_id, 'Taxpayer is not valid');
+        debug_log($order_id, 'Taxpayer is not valid');
         return null;
         
     } catch (\Exception $e) {
-        write_log($order_id, 'Failed to fetch taxpayer data', 'Error', $e->getMessage());
+        debug_log($order_id, 'Failed to fetch taxpayer data', 'Error', $e->getMessage());
         return null;
     }
 }
@@ -108,12 +94,11 @@ function create_buyer_data($order, $current_order_id, $api_key, $vat_number, $bi
         $buyer_data['send_email'] = false; // Don't send email by default
     }
     
-    write_log($current_order_id, 'Buyer data created', 'Name', $buyer_name, 'City', $buyer_city);
-    
     return $buyer_data;
 }
 
-function create_seller_data($current_order_id) {
+function create_seller_data($current_order_id): array
+{
     return array(
         'email_reply_to' => \get_option('admin_email'),
         'email_subject' => 'Invoice for order #' . $current_order_id,
@@ -121,7 +106,8 @@ function create_seller_data($current_order_id) {
     );
 }
 
-function build_order_items_data($order, $current_order_id) {
+function build_order_items_data($order, $current_order_id): \WP_Error|array
+{
     $order_id = $order->id;
     $items = OrderItem::where('order_id', $order_id)->get();
     
@@ -130,8 +116,6 @@ function build_order_items_data($order, $current_order_id) {
     }
     
     $quantity_unit = \get_option('szamlazz_hu_quantity_unit', 'db');
-    
-    write_log($current_order_id, 'Building order items', 'Item count', $items->count());
     
     $items_data = array();
     
@@ -163,24 +147,6 @@ function build_order_items_data($order, $current_order_id) {
             'net_price' => $net_price,
             'vat_amount' => $tax_amount,
             'gross_amount' => $gross_amount,
-        );
-        
-        write_log(
-            $current_order_id, 
-            'Item', 
-            $order_item->title, 
-            'Qty', 
-            $order_item->quantity, 
-            'Unit price', 
-            $order_item->unit_price / 100,
-            'Tax rate', 
-            $taxRate . '%',
-            'Net', 
-            $net_price,
-            'VAT', 
-            $tax_amount,
-            'Gross', 
-            $gross_amount
         );
     }
     
@@ -217,22 +183,12 @@ function build_order_items_data($order, $current_order_id) {
     return $items_data;
 }
 
-function log_activity($order_id, $success, $message) {
-    Activity::create([
-        'status' => $success ? 'success' : 'failed',
-        'log_type' => 'activity',
-        'module_type' => 'FluentCart\App\Models\Order',
-        'module_id' => $order_id,
-        'module_name' => 'order',
-        'title' => $success ? 'Számlázz.hu invoice successfully generated' : 'Számlázz.hu invoice generation failed',
-        'content' => $message
-    ]);
-}
+
 
 function generate_invoice($order, $current_order_id) {
     $order_id = $order->id;
     
-    write_log($current_order_id, 'Starting invoice generation', 'Currency', $order->currency);
+    debug_log($current_order_id, 'Starting invoice generation', 'Currency', $order->currency);
     
     $api_key = \get_option('szamlazz_hu_agent_api_key', '');
     
@@ -245,9 +201,9 @@ function generate_invoice($order, $current_order_id) {
     $billing_company_name = $checkout_data['form_data']['billing_company_name'] ?? null;
     
     if ($vat_number) {
-        write_log($current_order_id, 'VAT number found', $vat_number);
+        debug_log($current_order_id, 'VAT number found', $vat_number);
     } else {
-        write_log($current_order_id, 'No VAT number provided');
+        debug_log($current_order_id, 'No VAT number provided');
     }
     
     $buyer_data = create_buyer_data($order, $current_order_id, $api_key, $vat_number, $billing_company_name);
@@ -262,8 +218,8 @@ function generate_invoice($order, $current_order_id) {
     $invoice_language = \get_option('szamlazz_hu_invoice_language', 'hu');
     
     $invoice_type_name = ($invoice_type == strval(INVOICE_TYPE_E_INVOICE)) ? 'E-Invoice' : 'Paper Invoice';
-    write_log($order_id, 'Invoice type set to', $invoice_type_name);
-    write_log($order_id, 'Invoice language set to', $invoice_language);
+    debug_log($order_id, 'Invoice type set to', $invoice_type_name);
+    debug_log($order_id, 'Invoice language set to', $invoice_language);
     
     $items_data = build_order_items_data($order, $current_order_id);
     if (\is_wp_error($items_data)) {
@@ -301,7 +257,7 @@ function generate_invoice($order, $current_order_id) {
         'items' => $items_data,
     );
     
-    write_log($current_order_id, 'Generating invoice via API');
+    debug_log($current_order_id, 'Generating invoice via API');
     
     return generate_invoice_api($current_order_id, $api_key, $params);
 }
@@ -310,20 +266,20 @@ function create_invoice($order, $main_order = null): void
 {
     $order_id = $order->id;
     if ($order->total_amount == 0 && \get_option('szamlazz_hu_zero_invoice', '1') == '0') {
-        write_log($order_id, 'Skipping invoice creation for order with 0 total', 'Order ID', $order_id, 'Main order ID', $main_order->id);
+        debug_log($order_id, 'Skipping invoice creation for order with 0 total', 'Order ID', $order_id, 'Main order ID', $main_order->id);
         return;
     }
     if ($main_order === null)
         $main_order = $order;
     
-    write_log($order_id, 'Invoice creation triggered', 'Order ID', $order_id, 'Main order ID', $main_order->id);
+    debug_log($order_id, 'Invoice creation triggered', 'Order ID', $order_id, 'Main order ID', $main_order->id);
     
     init_paths();
     
     $existing_invoice_number = get_invoice_number_by_order_id($order_id);
     if ($existing_invoice_number) {
         $message = sprintf('Invoice already exists: %s', $existing_invoice_number);
-        write_log($order_id, 'Invoice already exists', $existing_invoice_number);
+        debug_log($order_id, 'Invoice already exists', $existing_invoice_number);
         log_activity($order_id, true, $message);
         return;
     }
@@ -332,7 +288,7 @@ function create_invoice($order, $main_order = null): void
     
     if (\is_wp_error($result)) {
         $error_message = 'Failed to generate invoice: ' . $result->get_error_message();
-        write_log($order_id, 'Invoice generation failed', 'Error', $error_message);
+        debug_log($order_id, 'Invoice generation failed', 'Error', $error_message);
         log_activity($order_id, false, $error_message);
         return;
     }
@@ -340,7 +296,7 @@ function create_invoice($order, $main_order = null): void
     if (!empty($result['success']) && !empty($result['invoice_number'])) {
         $invoice_number = $result['invoice_number'];
         
-        write_log($order_id, 'Invoice generated successfully', 'Invoice number', $invoice_number);
+        debug_log($order_id, 'Invoice generated successfully', 'Invoice number', $invoice_number);
         
         save_invoice($order_id, $invoice_number);
         
@@ -348,7 +304,7 @@ function create_invoice($order, $main_order = null): void
         log_activity($order_id, true, $message);
     } else {
         $error_message = 'Failed to generate invoice: Unknown error';
-        write_log($order_id, 'Invoice generation failed', 'Error', $error_message);
+        debug_log($order_id, 'Invoice generation failed', 'Error', $error_message);
         log_activity($order_id, false, $error_message);
     }
 }

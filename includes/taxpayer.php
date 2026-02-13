@@ -44,7 +44,7 @@ function get_taxpayer_api($order_id, $api_key, $vat_id) {
 
 	if (false !== $cached_result) {
 		if ($order_id > 0) {
-			write_log( $order_id, 'Taxpayer data found in cache', 'VAT number', $vat_id );
+			debug_log( $order_id, 'Taxpayer data found in cache', 'VAT number', $vat_id );
 		}
 		return $cached_result;
 	}
