@@ -50,3 +50,22 @@ function get_invoice_number_by_order_id($order_id) {
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     return $wpdb->get_var($wpdb->prepare("SELECT invoice_number FROM %i WHERE order_id = %d", $table_name, $order_id));
 }
+
+function update_invoice($order_id, $invoice_number) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'szamlazzhu_fluentcart_invoices';
+    
+    // Direct database update is necessary for custom table.
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+    return $wpdb->update(
+        $table_name,
+        [
+            'invoice_number' => $invoice_number
+        ],
+        [
+            'order_id' => $order_id
+        ],
+        ['%s'],
+        ['%d']
+    );
+}

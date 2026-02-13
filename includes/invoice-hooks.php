@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) exit;
         $invoice_number = get_invoice_number_by_order_id($order_id);
         $invoice_number = cancel_invoice_api($order_id, $api_key, $invoice_number);
         if (!\is_wp_error($invoice_number)) {
-            save_invoice($order_id, $invoice_number);
+            update_invoice($order_id, $invoice_number);
             log_activity($order_id, true, "Cancel invoice created: $invoice_number.");
         }
     } else {
