@@ -39,17 +39,17 @@ function set_vat_data($key, $value): bool {
 }
 
 function get_taxpayer_api($order_id, $api_key, $vat_id) {
-	$cache_key = sanitize_key($vat_id);
+    $vatParts = explode('-', remove_leading_letters($vat_id));
+    $vat_id_base = $vatParts[0];
+	$cache_key = sanitize_key($vat_id_base);
 	$cached_result = get_vat_data($cache_key);
 
 	if (false !== $cached_result) {
 		if ($order_id > 0) {
-			debug_log( $order_id, 'Taxpayer data found in cache', 'VAT number', $vat_id );
+			debug_log( $order_id, 'Taxpayer data found in cache', 'VAT base', $vat_id_base );
 		}
 		return $cached_result;
 	}
-    $vatParts = explode('-', remove_leading_letters($vat_id));
-    $vat_id_base = $vatParts[0];
     
     $xml_string = build_taxpayer_xml($api_key, $vat_id_base);
     
