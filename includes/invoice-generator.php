@@ -278,9 +278,7 @@ function create_invoice($order, $main_order = null): void
     
     $existing_invoice_number = get_invoice_number_by_order_id($order_id);
     if ($existing_invoice_number) {
-        $message = sprintf('Invoice already exists: %s', $existing_invoice_number);
         debug_log($order_id, 'Invoice already exists', $existing_invoice_number);
-        log_activity($order_id, true, $message);
         return;
     }
     
