@@ -288,10 +288,7 @@ function cancel_invoice_api($order_id, $api_key, $invoice_number) {
             return create_error($order_id, 'api_error', sprintf('Invoice cancellation failed [%s]', $error_code), $error_message);
         }
         
-        return array(
-            'success' => true,
-            'invoice_number' => $invoice_number,
-        );
+        return $invoice_number;
         
     } catch (\Exception $e) {
         return create_error($order_id, 'parse_error', 'Failed to parse cancellation response XML', $e->getMessage(), $response_body);

@@ -26,9 +26,9 @@ if ( ! defined( 'ABSPATH' ) ) exit;
     if ($data['type'] == 'full') {
         $api_key = \get_option('szamlazz_hu_agent_api_key', '');
         $invoice_number = get_invoice_number_by_order_id($order_id);
-        $data = cancel_invoice_api($order_id, $api_key, $invoice_number);
-        if ($data['success'])
-            save_invoice($order_id, $data['invoice_number']);
+        $invoice_number = cancel_invoice_api($order_id, $api_key, $invoice_number);
+        if (!\is_wp_error($invoice_number))
+            save_invoice($order_id, $invoice_number);
     } else {
         log_activity($order_id, false, "Partial refund is not supported yet. Create invoice manually.");
     }
