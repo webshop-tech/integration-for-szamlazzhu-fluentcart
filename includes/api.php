@@ -29,7 +29,7 @@ function build_invoice_xml($params) {
     $beallitasok->addChild('szamlaagentkulcs', $params['api_key']);
     $beallitasok->addChild('eszamla', $params['invoice_type'] == 2 ? 'true' : 'false');
     $beallitasok->addChild('szamlaLetoltes', $params['download_pdf'] ? 'true' : 'false');
-    $beallitasok->addChild('valaszVerzio', '2'); // XML response
+    $beallitasok->addChild('valaszVerzio', '2');
     
     $fejlec = $xml->addChild('fejlec');
     $fejlec->addChild('keltDatum', $params['header']['issue_date']);
@@ -118,6 +118,7 @@ function build_cancel_invoice_xml($api_key, $invoice_number) {
     
     $beallitasok = $xml->addChild('beallitasok');
     $beallitasok->addChild('szamlaagentkulcs', $api_key);
+    $beallitasok->addChild('valaszVerzio', '2');
     $e_invoice = get_option('szamlazz_hu_invoice_type', '1') == strval(INVOICE_TYPE_E_INVOICE);
     $beallitasok->addChild('eszamla', $e_invoice ? 'true' : 'false');
     $beallitasok->addChild('szamlaLetoltes', 'false');
@@ -195,7 +196,7 @@ function fetch_invoice_pdf($order_id, $api_key, $invoice_number) {
     
     $xml->addChild('szamlaagentkulcs', $api_key);
     $xml->addChild('szamlaszam', $invoice_number);
-    $xml->addChild('valaszVerzio', '2'); // XML response version
+    $xml->addChild('valaszVerzio', '2');
     
     $xml_string = $xml->asXML();
     
